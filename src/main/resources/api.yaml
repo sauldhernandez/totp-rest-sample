@@ -1,0 +1,96 @@
+# Example YAML to get you started quickly.
+# Be aware that YAML has indentation based scoping.
+# Code completion support is available so start typing for available options.
+swagger: '2.0'
+
+# This is your document metadata
+info:
+  version: "1.0.0"
+  title: Google Auth Test
+
+consumes:
+- "application/json"
+
+# Describe your paths here
+paths:
+  # This is a path endpoint. Change it.
+  /register/{username}/start:
+    # This is a HTTP operation
+    get:
+      tags:
+      - signup
+      # Describe this verb here. Note: you can use markdown
+      description: Starts the registration process
+      parameters:
+      - name: username
+        in: path
+        type: string
+        required: true
+      produces:
+      - "image/png"
+      responses:
+        200:
+          description: The registration was started and the shared secret code was returned
+
+  /register/{username}/finish:
+    post:
+      tags:
+      - signup
+      description: Completes the registration process
+      parameters:
+      - name: username
+        in: path
+        type: string
+        required: true
+      - name: request
+        in: body
+        required: true
+        schema:
+          $ref: "#/definitions/RegistrationFinishRequest"
+      produces:
+      - "text/plain"
+      responses:
+        201:
+          description: The user was registered successfully.
+        409:
+          description: The user is already registered.
+        404:
+          description: This user's registration process has not started
+
+  /validate:
+    post:
+      tags:
+      - validation
+      parameters:
+      - name: request
+        in: body
+        required: true
+        schema:
+          $ref: "#/definitions/ValidationRequest"
+      produces:
+      - "text/plain"
+      responses:
+        200:
+          description: The code is valid
+        400:
+          description: The code is invalid
+        404:
+          description: No such user
+definitions:
+  RegistrationFinishRequest:
+    type: object
+    required:
+    - code
+    properties:
+     code:
+      type: integer
+  ValidationRequest:
+    type: object
+    required:
+    - username
+    - code
+    properties:
+      username:
+        type: string
+      code:
+        type: integer
